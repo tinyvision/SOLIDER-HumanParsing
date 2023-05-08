@@ -82,7 +82,7 @@ class CriterionAll(nn.Module):
                                        mode='bilinear', align_corners=True)
             if target[3] is None:
                 loss += self.lamda_2 * F.cross_entropy(scale_pred, target[1],
-                                                       weights.cuda(), ignore_index=self.ignore_index)
+                                                       weights.to(scale_pred.device), ignore_index=self.ignore_index)
             else:
                 soft_scale_edge = F.interpolate(input=target[3], size=(h, w),
                                                 mode='bilinear', align_corners=True)
@@ -137,6 +137,6 @@ def moving_average(target1, target2, alpha=1.0):
 def to_one_hot(tensor, num_cls, dim=1, ignore_index=255):
     b, h, w = tensor.shape
     tensor[tensor == ignore_index] = 0
-    onehot_tensor = torch.zeros(b, num_cls, h, w).cuda()
+    onehot_tensor = torch.zeros(b, num_cls, h, w).to(tensor.device)
     onehot_tensor.scatter_(dim, tensor.unsqueeze(dim), 1)
     return onehot_tensor

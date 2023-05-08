@@ -6,8 +6,8 @@
 @Contact :   peike.li@yahoo.com
 @File    :   kl_loss.py
 @Time    :   7/23/19 4:02 PM
-@Desc    :   
-@License :   This source code is licensed under the license found in the 
+@Desc    :
+@License :   This source code is licensed under the license found in the
              LICENSE file in the root directory of this source tree.
 """
 import torch
@@ -40,5 +40,5 @@ class KLDivergenceLoss(nn.Module):
     def forward(self, input, target, label):
         log_input_prob = F.log_softmax(input / self.T, dim=1)
         target_porb = F.softmax(target / self.T, dim=1)
-        loss = F.kl_div(*flatten_probas(log_input_prob, target_porb, label, ignore=self.ignore_index))
+        loss = F.kl_div(*flatten_probas(log_input_prob, target_porb, label, ignore=self.ignore_index), reduction='batchmean')
         return self.T*self.T*loss # balanced

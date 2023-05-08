@@ -6,14 +6,15 @@
 @Contact :   peike.li@yahoo.com
 @File    :   schp.py
 @Time    :   4/8/19 2:11 PM
-@Desc    :   
-@License :   This source code is licensed under the license found in the 
+@Desc    :
+@License :   This source code is licensed under the license found in the
              LICENSE file in the root directory of this source tree.
 """
 
 import os
 import torch
-import modules
+from tqdm import tqdm
+#import modules
 
 def moving_average(net1, net2, alpha=1):
     for param1, param2 in zip(net1.parameters(), net2.parameters()):
@@ -22,7 +23,8 @@ def moving_average(net1, net2, alpha=1):
 
 
 def _check_bn(module, flag):
-    if issubclass(module.__class__, modules.bn.InPlaceABNSync):
+    #if issubclass(module.__class__, modules.bn.InPlaceABNSync):
+    if issubclass(module.__class__, torch.nn.modules.batchnorm.SyncBatchNorm):
         flag[0] = True
 
 
@@ -33,18 +35,21 @@ def check_bn(model):
 
 
 def reset_bn(module):
-    if issubclass(module.__class__, modules.bn.InPlaceABNSync):
+    #if issubclass(module.__class__, modules.bn.InPlaceABNSync):
+    if issubclass(module.__class__, torch.nn.modules.batchnorm.SyncBatchNorm):
         module.running_mean = torch.zeros_like(module.running_mean)
         module.running_var = torch.ones_like(module.running_var)
 
 
 def _get_momenta(module, momenta):
-    if issubclass(module.__class__, modules.bn.InPlaceABNSync):
+    #if issubclass(module.__class__, modules.bn.InPlaceABNSync):
+    if issubclass(module.__class__, torch.nn.modules.batchnorm.SyncBatchNorm):
         momenta[module] = module.momentum
 
 
 def _set_momenta(module, momenta):
-    if issubclass(module.__class__, modules.bn.InPlaceABNSync):
+    #if issubclass(module.__class__, modules.bn.InPlaceABNSync):
+    if issubclass(module.__class__, torch.nn.modules.batchnorm.SyncBatchNorm):
         module.momentum = momenta[module]
 
 
@@ -57,13 +62,13 @@ def bn_re_estimate(loader, model):
     model.apply(reset_bn)
     model.apply(lambda module: _get_momenta(module, momenta))
     n = 0
-    for i_iter, batch in enumerate(loader):
+    for i_iter, batch in tqdm(enumerate(loader)):
         images, labels, _ = batch
         b = images.data.size(0)
         momentum = b / (n + b)
         for module in momenta.keys():
             module.momentum = momentum
-        model(images)
+        model(images.to('cuda'))
         n += b
     model.apply(lambda module: _set_momenta(module, momenta))
 

@@ -7,7 +7,7 @@ def generate_edge_tensor(label, edge_width=3):
     if len(label.shape) == 2:
         label = label.unsqueeze(0)
     n, h, w = label.shape
-    edge = torch.zeros(label.shape, dtype=torch.float).cuda()
+    edge = torch.zeros(label.shape, dtype=torch.float).to(label.device)
     # right
     edge_right = edge[:, 1:h, :]
     edge_right[(label[:, 1:h, :] != label[:, :h - 1, :]) & (label[:, 1:h, :] != 255)
@@ -31,7 +31,7 @@ def generate_edge_tensor(label, edge_width=3):
                      & (label[:, :h - 1, 1:w] != 255)
                      & (label[:, 1:h, :w - 1] != 255)] = 1
 
-    kernel = torch.ones((1, 1, edge_width, edge_width), dtype=torch.float).cuda()
+    kernel = torch.ones((1, 1, edge_width, edge_width), dtype=torch.float).to(label.device)
     with torch.no_grad():
         edge = edge.unsqueeze(1)
         edge = F.conv2d(edge, kernel, stride=1, padding=1)
