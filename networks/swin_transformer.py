@@ -1319,6 +1319,8 @@ class SwinTransformer(BaseModule):
             #ckpt = _load_checkpoint(self,
             #    pretrained, logger=logger, map_location='cpu')
             ckpt = torch.load(pretrained,map_location='cpu')
+            if 'teacher' in ckpt:
+                ckpt = ckpt['teacher']
             if 'state_dict' in ckpt:
                 _state_dict = ckpt['state_dict']
             elif 'model' in ckpt:
