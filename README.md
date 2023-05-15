@@ -37,8 +37,8 @@ If you find this code useful for your research, please cite our paper
 ```
 @inproceedings{chen2023beyond,
   title={Beyond Appearance: a Semantic Controllable Self-Supervised Learning Framework for Human-Centric Visual Tasks},
-    author={Weihua Chen and Xianzhe Xu and Jian Jia and Hao Luo and Yaohua Wang and Fan Wang and Rong Jin and Xiuyu Sun},
-      booktitle={The IEEE/CVF Conference on Computer Vision and Pattern Recognition},
-        year={2023},
+  author={Weihua Chen and Xianzhe Xu and Jian Jia and Hao Luo and Yaohua Wang and Fan Wang and Rong Jin and Xiuyu Sun},
+  booktitle={The IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  year={2023},
 }
 ```
